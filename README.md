@@ -80,7 +80,7 @@ Ideas:
 
 * [Documentation](https://docs.singlestore.com)
 * [Twitter](https://twitter.com/SingleStoreDevs)
-* [SingleStore Forums](https://www.singlestore.com/forum).
+* [SingleStore Forums](https://www.singlestore.com/forum)
 
 
 [docs-ef]: https://docs.singlestore.com/db/latest/en/reference/sql-reference/procedural-sql-reference/create--or-replace--external-function.html
