@@ -2,14 +2,14 @@
 
 This is an example of using [CloudFlare Workers][cloudflare-workers] along with [SingleStore External Functions][docs-ef].
 
-SingleStore External Functions is a feature in SingleStore which allows the engine to send and receive rows to an external HTTP service during query execution. Using this feature, we can augment SingleStore's capabilities with arbitrary functionality.
+SingleStore External Functions is a feature in SingleStore which allows the engine to send and receive rows to an external HTTP service during query execution. Using this feature, we can augment SingleStore's capabilities with new functionality.
 
 **Example use cases:**
 
 * Translating text content between languages using [Amazon Translate][aws-translate]
 * Performing sentiment analysis (included in this repository)
 * Pushing or pulling data to or from an external system
-* ...anything else you can put behind an HTTP server :)
+* ...anything else you can put behind an HTTP server 😊
 
 ## Setup
 
@@ -68,7 +68,7 @@ select body, sentiment(body) from posts;
 
 ## Exercises
 
-Now that you have a working endpoint, let's define some more! Modify index.js to add additional endpoints to the router and then re-publish the file to cloudflare workers. Then just create a new function for each of your endpoints.
+Now that you have a working endpoint, let's define some more! Modify index.js to add additional endpoints to the router and then re-publish the file to cloudflare workers. Then create a new function for each of your endpoints.
 
 Ideas:
 1. Create a function which transforms strings to uppercase
