@@ -8,6 +8,7 @@ SingleStore External Functions is a feature in SingleStore which allows the engi
 
 * Translating text content between languages using [Amazon Translate][aws-translate]
 * Performing sentiment analysis (included in this repository)
+* Loading data from an external API (included in this repository)
 * Pushing or pulling data to or from an external system
 * ...anything else you can put behind an HTTP server 😊
 
@@ -28,10 +29,10 @@ This repo is already setup to publish a worker to CloudFlare using their wrangle
 ```bash
 yarn install
 yarn run wrangler login # only need to run this once per machine
-yarn run wrangler publish --name s2-sentiment index.js
+yarn run wrangler publish --name s2-ef-demo index.js
 ```
 
-If everything works, you should receive a url like `s2-sentiment.SUBDOMAIN.workers.dev`. The SUBDOMAIN will be specific to your CloudFlare account.
+If everything works, you should receive a url like `s2-ef-demo.SUBDOMAIN.workers.dev`. The SUBDOMAIN will be specific to your CloudFlare account.
 
 ## Creating the external function
 
@@ -51,7 +52,7 @@ use demo;
 
 CREATE OR REPLACE EXTERNAL FUNCTION sentiment (body TEXT)
 RETURNS DOUBLE
-AS REMOTE SERVICE "s2-sentiment.YOUR_WORKER_SUBDOMAIN.workers.dev/sentiment"
+AS REMOTE SERVICE "s2-ef-demo.YOUR_WORKER_SUBDOMAIN.workers.dev/sentiment"
 FORMAT JSON;
 
 -- change the string here to see the sentiment of different content
@@ -66,6 +67,27 @@ insert into posts values (3, "I am a huge fan of pineapples");
 select body, sentiment(body) from posts;
 ```
 
+And here is how you would use the coincap assets function we deployed:
+
+```sql
+create database if not exists demo;
+use demo;
+
+CREATE OR REPLACE EXTERNAL FUNCTION coincap_assets (search TEXT)
+RETURNS TABLE(data TEXT)
+AS REMOTE SERVICE "s2-ef-demo.YOUR_WORKER_SUBDOMAIN.workers.dev/coincap/assets"
+FORMAT JSON;
+
+select * from coincap_assets("BTC");
+
+select
+    data::$name,
+    format(data::%marketCapUsd, 0),
+    format(data::%changePercent24Hr, 2)
+from coincap_assets("BTC")
+order by data::%changePercent24Hr desc;
+```
+
 ## Exercises
 
 Now that you have a working endpoint, let's define some more! Modify index.js to add additional endpoints to the router and then re-publish the file to cloudflare workers. Then create a new function for each of your endpoints.
@@ -73,8 +95,8 @@ Now that you have a working endpoint, let's define some more! Modify index.js to
 Ideas:
 1. Create a function which transforms strings to uppercase
 2. Create a function which returns the number of words in a string
-3. Create a function which takes multiple arguments 
-4. Create a function which returns the factorial of the input number
+3. Create a function which takes multiple arguments
+4. Create a function which queries an external API
 
 ## Resources
 

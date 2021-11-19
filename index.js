@@ -31,6 +31,37 @@ router.post("/sentiment", async (request) => {
   });
 });
 
+const coincapAssets = (search) =>
+  fetch(
+    "https://api.coincap.io/v2/assets?limit=5&search=" +
+      encodeURIComponent(search),
+    {
+      headers: {
+        Accept: "application/json",
+
+        // update this with your coincap api key to increase rate limits
+        // Authorization: "Bearer XXX",
+      },
+    }
+  ).then((r) => r.json());
+
+router.post("/coincap/assets", async (request) => {
+  const body = await request.json();
+  let out = [];
+
+  for (let i = 0; i < body.data.length; i++) {
+    let [rowid, search] = body.data[i];
+    let result = await coincapAssets(search);
+    for (let j = 0; j < result.data.length; j++) {
+      out.push([rowid, JSON.stringify(result.data[j])]);
+    }
+  }
+
+  return new Response(JSON.stringify({ data: out }), {
+    headers: { "content-type": "application/json" },
+  });
+});
+
 router.get(
   "/",
   () => new Response("Welcome to the SingleStore External Functions Demo!")
